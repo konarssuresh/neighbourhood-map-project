@@ -94,3 +94,21 @@ this.map=new google.maps.Map(document.getElementById("map"),{
 ko.applyBindings(viewModel());
 
 }
+function listItem(place){
+  // console.log(typeOf place());
+  var z=null;
+  for(var i=0;i<place1.length;i++){
+if(place==place1[i].title){
+  // markers[i].setAnimation(google.maps.Animation.BOUNCE);
+  //       setTimeout(function() {
+  //           markers[i].setAnimation(null);
+  //       }, 500);
+   z=i;
+ }
+
+ }
+  markers[z].setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function() {
+            markers[z].setAnimation(null);
+        }, 500);
+}

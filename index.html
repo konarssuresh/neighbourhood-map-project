@@ -35,7 +35,7 @@
        <div>
            <input id="show" data-bind="value:filter, valueUpdate:'keyup'" placeholder="search"/>
            <ul data-bind="foreach:filterArray" id="ulist">
-               <li data-bind="text:$data" class="li"></li>
+               <li data-bind="text:$data,click:listItem" class="li"></li>
            </ul>
        </div>
     <div id="map"></div>
