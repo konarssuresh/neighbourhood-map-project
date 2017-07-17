@@ -1,64 +1,74 @@
 var place=[{
  title:"velammal institute of technology",
  location:{lat:13.2944135,lng:80.14929769999999},
+},{
+   title:"anna nagar west",
+ location:{lat:13.0937504,lng:80.2073566},
+},{
+ title:"vandalur zoo",
+ location:{lat:12.8793266,lng:80.0819116},
 },
 ];
 var markers=[];
 var mark=[];
-// var pos=function(){
-
-// }
 var viewModel=function(){
-// var filterArray=ko.observableArray([]);
 this.filter=ko.observable("");
-var location={lat:13.2944135,lng:80.14929769999999};
-
-// var markers=[];
-// markers[0].setMap(map);
 this.filterArray = ko.computed(function() {
     if (this.filter().length > 0) {
     var check=[];
     for(var i=0;i<place.length;i++){
     check.push(place[i].title);
     }
-    console.log(check);
+    // var m=check;
+    var k=this.filter();
+    // for(var i=0;i<place.length;i++){
+    // m.push(place[i].title);
+    // }
+    // console.log(check);
     var result=[];
-        //filter method ..in this method each element of the array goes to the callback function as argument. its a vanilla javascript built-in method
 
-            //includes is another vanilla javascript method which checks if the given element is present in the string
-            // console.log(c);
-    // if(c.includes(this.filter()))
-                //if key is present this is added to new array..includes give value either true or false
     for(var i=0;i<check.length;i++){
        if(check[i].includes(this.filter())){
         result.push(check[i]);
-        mark.push(i);
-       }
+        markers[i].setMap(map);
+       }else
+       markers[i].setMap(null);
     }
-
-
-    console.log(result);
-    // markers[0].setMap(map);
+    // console.log(result);
     return result;
-    }else
-    return check;
+    }else if(k==undefined||k==null){
+    for(var i=0;i<markers.length;i++){
+        markers[i].setMap(map);
+    }
+    var res=[];
+    for(var i=0;i<place.length;i++){
+        res.push(place[i].title);
+    }
+    return res;
+}
 }, this);
 
 }
 function initMap(){
+
 this.map=new google.maps.Map(document.getElementById("map"),{
     center:{lat:13.2944135,lng:80.14929769999999},
     zoom:12
 });
-
+ var bounds=new google.maps.LatLngBounds();
     for(var i=0;i<place.length;i++){
        var marker=new google.maps.Marker({
        position:place[i].location,
        title:place[i].title,
        // map:map
       });
+
        markers.push(marker);
+       bounds.extend(marker.position);
+       map.fitBounds(bounds);
+
     }
+
 
 
 
