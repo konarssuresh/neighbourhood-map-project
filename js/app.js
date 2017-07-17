@@ -4,6 +4,7 @@ var place=[{
 },
 ];
 var markers=[];
+var mark=[];
 // var pos=function(){
 
 // }
@@ -21,16 +22,23 @@ this.filterArray = ko.computed(function() {
     check.push(place[i].title);
     }
     console.log(check);
+    var result=[];
         //filter method ..in this method each element of the array goes to the callback function as argument. its a vanilla javascript built-in method
-    var result=check.filter(function(c){
+
             //includes is another vanilla javascript method which checks if the given element is present in the string
             // console.log(c);
-    if(c.includes(this.filter()))
+    // if(c.includes(this.filter()))
                 //if key is present this is added to new array..includes give value either true or false
-     return c;
-    });
+    for(var i=0;i<check.length;i++){
+       if(check[i].includes(this.filter())){
+        result.push(check[i]);
+        mark.push(i);
+       }
+    }
+
+
     console.log(result);
-    markers[0].setMap(map);
+    // markers[0].setMap(map);
     return result;
     }else
     return check;
