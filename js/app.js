@@ -21,10 +21,6 @@ this.filterArray = ko.computed(function() {
     }
     // var m=check;
     var k=this.filter();
-    // for(var i=0;i<place.length;i++){
-    // m.push(place[i].title);
-    // }
-    // console.log(check);
     var result=[];
 
     for(var i=0;i<check.length;i++){
@@ -68,9 +64,5 @@ this.map=new google.maps.Map(document.getElementById("map"),{
        map.fitBounds(bounds);
 
     }
-
-
-
-
 ko.applyBindings(viewModel());
 }
