@@ -1,4 +1,4 @@
-var place=[{
+var place1=[{
  title:"velammal institute of technology",
  location:{lat:13.2944135,lng:80.14929769999999},
 },{
@@ -10,14 +10,37 @@ var place=[{
 },
 ];
 var markers=[];
-var mark=[];
+// var mark=[];
+
 var viewModel=function(){
+// var ul=document.getElementById("ulist");
+// this.liNodes=ko.observableArray([]);
 this.filter=ko.observable("");
+this.place=ko.observableArray([{
+ title:"velammal institute of technology",
+ location:{lat:13.2944135,lng:80.14929769999999},
+},{
+   title:"anna nagar west",
+ location:{lat:13.0937504,lng:80.2073566},
+},{
+ title:"vandalur zoo",
+ location:{lat:12.8793266,lng:80.0819116},
+},
+]);
+// var place=ko.observableArray(place1);
+// for (var i = 0; i < ul.childNodes.length; i++) {
+//   if (ul.childNodes[i].nodeName == "LI") {
+//     liNodes.push(ul.childNodes[i].innerHTML);
+//   }
+// }
+// console.log(liNodes().length);
+// this.listCheck=ko.observableArray([]);
+// listCheck=documtent.getElementsByClassName("li");
 this.filterArray = ko.computed(function() {
     if (this.filter().length > 0) {
     var check=[];
-    for(var i=0;i<place.length;i++){
-    check.push(place[i].title);
+    for(var i=0;i<this.place().length;i++){
+    check.push(this.place()[i].title);
     }
     // var m=check;
     var k=this.filter();
@@ -29,6 +52,7 @@ this.filterArray = ko.computed(function() {
         markers[i].setMap(map);
        }else
        markers[i].setMap(null);
+
     }
     // console.log(result);
     return result;
@@ -37,8 +61,8 @@ this.filterArray = ko.computed(function() {
         markers[i].setMap(map);
     }
     var res=[];
-    for(var i=0;i<place.length;i++){
-        res.push(place[i].title);
+    for(var i=0;i<this.place().length;i++){
+        res.push(this.place()[i].title);
     }
     return res;
 }
@@ -52,10 +76,11 @@ this.map=new google.maps.Map(document.getElementById("map"),{
     zoom:12
 });
  var bounds=new google.maps.LatLngBounds();
-    for(var i=0;i<place.length;i++){
+    for(var i=0;i<place1.length;i++){
+
        var marker=new google.maps.Marker({
-       position:place[i].location,
-       title:place[i].title,
+       position:place1[i].location,
+       title:place1[i].title,
        // map:map
       });
 
@@ -64,5 +89,8 @@ this.map=new google.maps.Map(document.getElementById("map"),{
        map.fitBounds(bounds);
 
     }
+    var ul=document.getElementById("ulist");
+
 ko.applyBindings(viewModel());
+
 }
