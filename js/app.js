@@ -17,17 +17,7 @@ var viewModel=function(){
 // var ul=document.getElementById("ulist");
 // this.liNodes=ko.observableArray([]);
 this.filter=ko.observable("");
-this.place=ko.observableArray([{
- title:"velammal institute of technology",
- location:{lat:13.2944135,lng:80.14929769999999},
-},{
-   title:"anna nagar west",
- location:{lat:13.0937504,lng:80.2073566},
-},{
- title:"vandalur zoo",
- location:{lat:12.8793266,lng:80.0819116},
-},
-]);
+this.place=ko.observableArray(place1);
 // var place=ko.observableArray(place1);
 // for (var i = 0; i < ul.childNodes.length; i++) {
 //   if (ul.childNodes[i].nodeName == "LI") {
@@ -99,33 +89,22 @@ ko.applyBindings(viewModel());
 
 }
 function listItem(place){
-  // console.log(typeOf place());
   var z=null;
-  largeInfowindow=new google.maps.InfoWindow();
+  var largeInfowindow=new google.maps.InfoWindow();
   for(var i=0;i<place1.length;i++){
-if(place==place1[i].title){
-  // markers[i].setAnimation(google.maps.Animation.BOUNCE);
-  //       setTimeout(function() {
-  //           markers[i].setAnimation(null);
-  //       }, 500);
+   if(place==place1[i].title){
    z=i;
- }
-
- }
+   }
+  }
   markers[z].setAnimation(google.maps.Animation.BOUNCE);
         setTimeout(function() {
             markers[z].setAnimation(null);
-        }, 500);
-
-     if (largeInfowindow.marker != markers[z]) {
-          largeInfowindow.marker = markers[z];
-          largeInfowindow.setContent('<div>' + markers[z].title + '</div>');
-          largeInfowindow.open(map, markers[z]);
-          // Make sure the marker property is cleared if the infowindow is closed.
-          largeInfowindow.addListener('closeclick', function() {
-            largeInfowindow.marker = null;
-          });
-        }
+        }, 700);
+  for(var i=0;i<place1.length;i++){
+    if(i==z){
+      populateInfoWindow(markers[i],largeInfowindow);
+    }
+  }
 }
       function populateInfoWindow(marker, infowindow) {
          marker.setAnimation(google.maps.Animation.BOUNCE);
