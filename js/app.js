@@ -76,7 +76,7 @@ this.map=new google.maps.Map(document.getElementById("map"),{
     center:{lat:13.2944135,lng:80.14929769999999},
     zoom:12
 });
-// var largeInfowindow = new google.maps.InfoWindow();
+var largeInfowindow = new google.maps.InfoWindow();
  var bounds=new google.maps.LatLngBounds();
     for(var i=0;i<place1.length;i++){
 
@@ -85,7 +85,9 @@ this.map=new google.maps.Map(document.getElementById("map"),{
        title:place1[i].title,
        // map:map
       });
-
+       marker.addListener('click', function() {
+            populateInfoWindow(this, largeInfowindow);
+          });
        markers.push(marker);
        bounds.extend(marker.position);
        map.fitBounds(bounds);
@@ -99,7 +101,7 @@ ko.applyBindings(viewModel());
 function listItem(place){
   // console.log(typeOf place());
   var z=null;
-  var info=new google.maps.InfoWindow();
+  largeInfowindow=new google.maps.InfoWindow();
   for(var i=0;i<place1.length;i++){
 if(place==place1[i].title){
   // markers[i].setAnimation(google.maps.Animation.BOUNCE);
@@ -114,15 +116,30 @@ if(place==place1[i].title){
         setTimeout(function() {
             markers[z].setAnimation(null);
         }, 500);
-    // populateInfoWindow(markers[z],largeInfowindow);
-  // infoWindow.open(map,markers[z]);
-     if (info.marker != markers[z]) {
-          info.marker = markers[z];
-          info.setContent('<div>' + markers[z].title + '</div>');
-          info.open(map, markers[z]);
+
+     if (largeInfowindow.marker != markers[z]) {
+          largeInfowindow.marker = markers[z];
+          largeInfowindow.setContent('<div>' + markers[z].title + '</div>');
+          largeInfowindow.open(map, markers[z]);
           // Make sure the marker property is cleared if the infowindow is closed.
-          info.addListener('closeclick', function() {
-            info.marker = null;
+          largeInfowindow.addListener('closeclick', function() {
+            largeInfowindow.marker = null;
           });
         }
 }
+      function populateInfoWindow(marker, infowindow) {
+         marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function() {
+            marker.setAnimation(null);
+        }, 500);
+        // Check to make sure the infowindow is not already opened on this marker.
+        if (infowindow.marker != marker) {
+          infowindow.marker = marker;
+          infowindow.setContent('<div>' + marker.title + '</div>');
+          infowindow.open(map, marker);
+          // Make sure the marker property is cleared if the infowindow is closed.
+          infowindow.addListener('closeclick', function() {
+            infowindow.marker = null;
+          });
+        }
+      }
