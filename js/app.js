@@ -1,3 +1,13 @@
+if (!window.google || !window.google.maps){
+  $('#ulist').text('Error:connection issues, data could not be loaded try again later');
+  $('#map').append("<h1><br><br>Error in maps,try again later</h1>");
+}
+
+
+
+
+
+
 var place1=[{
  title:"velammal institute of technology",
  location:{lat:13.2944135,lng:80.14929769999999},
@@ -28,6 +38,9 @@ place1.forEach(function(p){
           else{
           p.infow="no article available in wikipedia about this";
         }
+        },
+        error:function(e){
+          e.infow="Error in connection.Please try again later";
         }
       });
 });
@@ -45,20 +58,10 @@ this.filterArray = ko.computed(function() {
     for(var i=0;i<this.place().length;i++){
     check.push(this.place()[i].title);
     }
-    // var m=check;
     var k=this.filter();
     var result=[];
 
     for(var i=0;i<check.length;i++){
-      //   $.ajax({
-      //   url:"https://en.wikipedia.org/w/api.php?action=opensearch&search="+place1[i].title+"&format=json",
-      //   dataType:"jsonp",
-      //   success:function(response){
-      //     var content=response[1];
-
-      //     console.log(place1[i].infow);
-      //   }
-      // });
        if(check[i].includes(this.filter())){
         result.push(check[i]);
         markers[i].setMap(map);
@@ -89,33 +92,53 @@ this.map=new google.maps.Map(document.getElementById("map"),{
 });
 var largeInfowindow = new google.maps.InfoWindow();
  var bounds=new google.maps.LatLngBounds();
+    // var o;
     for(var i=0;i<place1.length;i++){
-
+      // i=o;
        var marker=new google.maps.Marker({
        position:place1[i].location,
        title:place1[i].title,
        // map:map
       });
-       marker.addListener('click', function(i) {
-            console.log(i);
-            populateInfoWindow(this, largeInfowindow,i);
+       marker.addListener('click', function(){
+          markerInfo(this,largeInfowindow);
           });
+       console.log(typeof marker);
        markers.push(marker);
        bounds.extend(marker.position);
        map.fitBounds(bounds);
 
     }
-    // for(var i=0;i<markers.length;i++){
-    //   markers[i].addListener("click",function(){
-    //     console.log("clicked");
-    //     populateInfoWindow(this, largeInfowindow,i);
-    //   });
-    // }
-
     var ul=document.getElementById("ulist");
 
 ko.applyBindings(viewModel());
 
+}
+function markerInfo(marker,info){
+var z;
+for(var i=0;i<place1.length;i++){
+if(marker.title==place1[i].title){
+
+// else
+//   console.log("false");
+z=i;
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {
+    marker.setAnimation(null);
+  }, 700);
+    if (info.marker != marker) {
+    info.marker = marker;
+    info.setContent('<div>' + place1[z].infow + '</div>');
+    info.open(map, marker);
+    // Make sure the marker property is cleared if the infowindow is closed.
+    info.addListener('closeclick', function() {
+      info.marker = null;
+    });
+  }
+console.log(z);
+}
+}
+console.log(z);
 }
 function listItem(place){
   var z=null;
@@ -136,19 +159,20 @@ function listItem(place){
   }
 }
 
-      function populateInfoWindow(marker, infowindow,n) {
-         marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function() {
-            marker.setAnimation(null);
-        }, 700);
-        // Check to make sure the infowindow is not already opened on this marker.
-        if (infowindow.marker != marker) {
-          infowindow.marker = marker;
-          infowindow.setContent('<div>' + place1[n].infow + '</div>');
-          infowindow.open(map, marker);
-          // Make sure the marker property is cleared if the infowindow is closed.
-          infowindow.addListener('closeclick', function() {
-            infowindow.marker = null;
-          });
-        }
-      }
+  function populateInfoWindow(marker, infowindow,n) {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {
+    marker.setAnimation(null);
+  }, 700);
+  // Check to make sure the infowindow is not already opened on this marker.
+  if (infowindow.marker != marker) {
+    infowindow.marker = marker;
+    infowindow.setContent('<div>' + place1[n].infow + '</div>');
+    infowindow.open(map, marker);
+    // Make sure the marker property is cleared if the infowindow is closed.
+    infowindow.addListener('closeclick', function() {
+      infowindow.marker = null;
+    });
+  }
+}
+
