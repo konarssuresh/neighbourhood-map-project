@@ -1,7 +1,7 @@
-    #show{
+    #input-field{
         color:black;
     }
-     #full{
+     #map-body{
         padding-left: 0px;
         padding-right: 0px;
      }
@@ -29,9 +29,20 @@
         /*border:1px solid #999;*/
         /*border-radius:3px;*/
         color:white;
-        height:100vh;
+        height:100%;
         line-height:35px;
         padding:10px 10px 30px 10px;
         /*width:28%;*/
         bottom:0px;
     }
+    body {
+        background:#101010;
+    }
+/*    @media screen and (max-width: 765px){
+        #map-body{
+            width:50vw;
+        }
+        .togg{
+            width:0vw;
+        }
+    }*/

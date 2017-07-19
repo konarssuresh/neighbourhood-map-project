@@ -1,7 +1,10 @@
 //error handling in case map load takes long time to load or if there is any error in it
 if (!window.google || !window.google.maps){
-  $('#map').append("<h1><br><br>Error in maps,wait for some time</h1>");
+  $('#map').append("<h1><br><br>map is loading slow,wait for some time</h1>");
 }
+var googleError=function(){
+  $('#map').append("<h1><br><br>Error in maps,try again later</h1>");
+};
 
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -53,7 +56,7 @@ place1.forEach(function(p){
    $.ajax({
         url:"https://en.wikipedia.org/w/api.php?action=opensearch&search="+p.title+"&format=json&callback=call",
         dataType:"jsonp",
-        async:false,
+        async:true,
         success:function(response){
           var b=response[2][0];
           if(b.length>0){
@@ -79,14 +82,15 @@ var viewModel=function(){
 this.filter=ko.observable("");
 this.place=ko.observableArray(place1);
 //this filters the total list and markers based upon user input
-var k,i;
+var i;
+
 this.filterArray = ko.computed(function() {
     if (this.filter().length > 0) {
     var check=[];
     for(i=0;i<this.place().length;i++){
     check.push(this.place()[i].title);
     }
-    k=this.filter();
+     var k=this.filter();
     var result=[];
     for( i=0;i<check.length;i++){
        if(check[i].includes(this.filter())){
@@ -97,7 +101,7 @@ this.filterArray = ko.computed(function() {
 
     }
     return result;
-    }else if(k===undefined||k===null){
+    }else {
     for(i=0;i<markers.length;i++){
         markers[i].setMap(map);
     }
@@ -120,6 +124,7 @@ var largeInfowindow = new google.maps.InfoWindow();
     // var o;
     // for(var i=0;i<place1.length;i++){
       place1.forEach(function(p){
+        var pIndex=place1.indexOf(p);
        var marker=new google.maps.Marker({
        position:p.location,
        title:p.title,
@@ -142,21 +147,27 @@ ko.applyBindings(viewModel());
 //function called to select show the infowindow when marker is selected in maps
 function markerInfo(marker,info){
 var z;
-for(var i=0;i<place1.length;i++){
-if(marker.title==place1[i].title){
-z=i;
-    marker.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(animation(marker), 700);
+//for(var i=0;i<place1.length;i++){
+
+place1.forEach(function(p){
+if(marker.title==p.title){
+z=place1.indexOf(p);
+ markers[z].setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function() {
+            markers[z].setAnimation(null);
+        }, 700);
     if (info.marker != marker) {
     info.marker = marker;
     info.setContent('<div>' + place1[z].infow + '</div>');
     info.open(map, marker);
     // Make sure the marker property is cleared if the infowindow is closed.
-    info.addListener('closeclick',closeClick(info,marker));
+    info.addListener('closeclick',function(){
+      info.marker=null;
+    });
   }
 console.log(z);
 }
-}
+});
 console.log(z);
 }
 function listItem(place){
@@ -195,10 +206,3 @@ function listItem(place){
   }
 }
 
-function closeClick(i,p){
-  i.p=null;
-}
-
-function animation(marker){
-  marker.setAnimation(null);
-}
