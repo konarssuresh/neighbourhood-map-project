@@ -1,13 +1,11 @@
+//error handling in case map load takes long time to load or if there is any error in it
 if (!window.google || !window.google.maps){
-  $('#ulist').text('Error:connection issues, data could not be loaded try again later');
-  $('#map').append("<h1><br><br>Error in maps,try again later</h1>");
+  $('#map').append("<h1><br><br>Error in maps,wait for some time</h1>");
 }
 
+// --------------------------------------------------------------------------------------------------------------------
 
-
-
-
-
+//data model
 var place1=[{
  title:"velammal institute of technology",
  location:{lat:13.2944135,lng:80.14929769999999},
@@ -17,14 +15,40 @@ var place1=[{
  location:{lat:13.0937504,lng:80.2073566},
  infow:"",
 },{
+  title:"koyambedu wholesale market",
+  location:{lat: 13.0671789,lng: 80.19517809999999},
+  infow:"",
+},{
+  title:"vadapalani andavar temple",
+ location:{lat: 13.0528712,lng: 80.2135909},
+ infow:"",
+},{
  title:"vandalur zoo",
  location:{lat:12.8793266,lng:80.0819116},
+ infow:"",
+},{
+  title:"guindy race course",
+ location:{lat: 13.0074001,lng: 80.21406069999999},
+ infow:"",
+},{
+  title:"tambaram sanatorium",
+ location:{lat: 12.9451497,lng: 80.129599},
+ infow:"",
+},{
+  title:"ripon building",
+ location:{lat: 13.0818799,lng: 80.27159139999999},
  infow:"",
 },
 ];
 var markers=[];
+//loop to store the data obtained from third party api which is mediawiki in this case to the datamodel
 var infowi=[];
-
+//this is done to handle error in case of media wiki api fails to load within 10 secs it will alert the user that there is error in media wiki
+var wikitimeout=setTimeout(function(){
+for(var i=0;i<place1.length;i++){
+  alert("wikipedia error, check network connection and refresh page");
+}
+},10000);
 place1.forEach(function(p){
    $.ajax({
         url:"https://en.wikipedia.org/w/api.php?action=opensearch&search="+p.title+"&format=json&callback=call",
@@ -38,20 +62,23 @@ place1.forEach(function(p){
           else{
           p.infow="no article available in wikipedia about this";
         }
+           clearTimeout(wikitimeout);
         },
         error:function(e){
-          e.infow="Error in connection.Please try again later";
+          e.infow="Error in wikipedia.Please try again later";
         }
+
       });
 });
 for(var i=0;i<place1.length;i++){
 
   infowi.push(place1[i].infow);
 }
-
+// viewmodel
 var viewModel=function(){
 this.filter=ko.observable("");
 this.place=ko.observableArray(place1);
+//this filters the total list and markers based upon user input
 this.filterArray = ko.computed(function() {
     if (this.filter().length > 0) {
     var check=[];
@@ -69,7 +96,6 @@ this.filterArray = ko.computed(function() {
        markers[i].setMap(null);
 
     }
-    // console.log(result);
     return result;
     }else if(k==undefined||k==null){
     for(var i=0;i<markers.length;i++){
@@ -82,9 +108,8 @@ this.filterArray = ko.computed(function() {
     return res;
 }
 }, this);
-
-
 }
+//this is the function to be called during map load
 function initMap(){
 this.map=new google.maps.Map(document.getElementById("map"),{
     center:{lat:13.2944135,lng:80.14929769999999},
@@ -114,13 +139,11 @@ var largeInfowindow = new google.maps.InfoWindow();
 ko.applyBindings(viewModel());
 
 }
+//function called to select show the infowindow when marker is selected in maps
 function markerInfo(marker,info){
 var z;
 for(var i=0;i<place1.length;i++){
 if(marker.title==place1[i].title){
-
-// else
-//   console.log("false");
 z=i;
     marker.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function() {
@@ -158,7 +181,7 @@ function listItem(place){
     }
   }
 }
-
+//function to animate the marker and show infowindow when selected
   function populateInfoWindow(marker, infowindow,n) {
     marker.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function() {
