@@ -79,16 +79,16 @@ var viewModel=function(){
 this.filter=ko.observable("");
 this.place=ko.observableArray(place1);
 //this filters the total list and markers based upon user input
+var k,i;
 this.filterArray = ko.computed(function() {
     if (this.filter().length > 0) {
     var check=[];
-    for(var i=0;i<this.place().length;i++){
+    for(i=0;i<this.place().length;i++){
     check.push(this.place()[i].title);
     }
-    var k=this.filter();
+    k=this.filter();
     var result=[];
-
-    for(var i=0;i<check.length;i++){
+    for( i=0;i<check.length;i++){
        if(check[i].includes(this.filter())){
         result.push(check[i]);
         markers[i].setMap(map);
@@ -97,18 +97,18 @@ this.filterArray = ko.computed(function() {
 
     }
     return result;
-    }else if(k==undefined||k==null){
-    for(var i=0;i<markers.length;i++){
+    }else if(k===undefined||k===null){
+    for(i=0;i<markers.length;i++){
         markers[i].setMap(map);
     }
     var res=[];
-    for(var i=0;i<this.place().length;i++){
+    for(i=0;i<this.place().length;i++){
         res.push(this.place()[i].title);
     }
     return res;
 }
 }, this);
-}
+};
 //this is the function to be called during map load
 function initMap(){
 this.map=new google.maps.Map(document.getElementById("map"),{
@@ -118,11 +118,11 @@ this.map=new google.maps.Map(document.getElementById("map"),{
 var largeInfowindow = new google.maps.InfoWindow();
  var bounds=new google.maps.LatLngBounds();
     // var o;
-    for(var i=0;i<place1.length;i++){
-      // i=o;
+    // for(var i=0;i<place1.length;i++){
+      place1.forEach(function(p){
        var marker=new google.maps.Marker({
-       position:place1[i].location,
-       title:place1[i].title,
+       position:p.location,
+       title:p.title,
        // map:map
       });
        marker.addListener('click', function(){
@@ -133,8 +133,8 @@ var largeInfowindow = new google.maps.InfoWindow();
        bounds.extend(marker.position);
        map.fitBounds(bounds);
 
-    }
-    var ul=document.getElementById("ulist");
+    });
+
 
 ko.applyBindings(viewModel());
 
@@ -146,17 +146,13 @@ for(var i=0;i<place1.length;i++){
 if(marker.title==place1[i].title){
 z=i;
     marker.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(function() {
-    marker.setAnimation(null);
-  }, 700);
+    setTimeout(animation(marker), 700);
     if (info.marker != marker) {
     info.marker = marker;
     info.setContent('<div>' + place1[z].infow + '</div>');
     info.open(map, marker);
     // Make sure the marker property is cleared if the infowindow is closed.
-    info.addListener('closeclick', function() {
-      info.marker = null;
-    });
+    info.addListener('closeclick',closeClick(info,marker));
   }
 console.log(z);
 }
@@ -175,9 +171,9 @@ function listItem(place){
         setTimeout(function() {
             markers[z].setAnimation(null);
         }, 700);
-  for(var i=0;i<place1.length;i++){
-    if(i==z){
-      populateInfoWindow(markers[i],largeInfowindow,i);
+  for(var p=0;p<place1.length;p++){
+    if(p==z){
+      populateInfoWindow(markers[p],largeInfowindow,p);
     }
   }
 }
@@ -199,3 +195,10 @@ function listItem(place){
   }
 }
 
+function closeClick(i,p){
+  i.p=null;
+}
+
+function animation(marker){
+  marker.setAnimation(null);
+}
